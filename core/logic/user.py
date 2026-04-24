@@ -1,8 +1,8 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 from api.utils.errors import raise_error, ErrorCode
-from core.utils.security_utils import get_password_hash
-from core.logic.repository.user_rep import create_user, get_user
+from core.utils.security_utils import get_password_hash, verify_password
+from core.logic.repository.user_rep import create_user, get_user, get_user_for_login
 from api.utils.security import create_access_token
 
 async def check_user(db, user_data):
@@ -26,5 +26,23 @@ async def registrate_user(password, login, email, db):
             'id': new_user.id,
             'login': new_user.login,
             'registered_at': new_user.registered_at
+        }
+    }
+
+async def login_user(user_data, db):
+    user = await get_user_for_login(db, user_data)
+    if not user:
+        await raise_error(ErrorCode.USER_NOT_FOUND, status_code=status.HTTP_401_UNAUTHORIZED)
+    if not verify_password(user_data.password, user.password_hash):
+        await raise_error(ErrorCode.INVALID_PASSWORD, status_code=status.HTTP_401_UNAUTHORIZED)
+    access_token = create_access_token(data={'sub': str(user.id)})
+    return {
+        'status': 'success',
+        'access_token': access_token,
+        'token_type': 'bearer',
+        'user_info': {
+            'id': user.id,
+            'login': user.login,
+            'registered_at': user.registered_at
         }
     }
