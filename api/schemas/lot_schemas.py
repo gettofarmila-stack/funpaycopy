@@ -18,3 +18,14 @@ class LotResponse(LotCreate):
 class SortOrder(str, Enum):
     price_asc = 'price_asc'
     price_desc = 'price_desc'
+
+class CurrentLotReponse(BaseModel):
+    id: int
+    seller_id: int
+    category_id: int
+    short_description: str
+    description: str
+    price: float
+    stock: int
+    class Config:
+        from_attributes = True

@@ -12,3 +12,7 @@ async def create_lot_rep(price, seller_id, short_desc, desc, stock, category_id,
 async def get_lots_in_category_rep(subcategory_id, db, sort_rule):
     query = await db.execute(select(Lot).where(Lot.category_id == subcategory_id).order_by(sort_rule))
     return query.scalars().all()
+
+async def get_current_lot_info_rep(lot_id, db):
+    query = await db.execute(select(Lot).where(Lot.id == lot_id))
+    return query.scalar_one_or_none()
