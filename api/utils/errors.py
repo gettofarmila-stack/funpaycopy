@@ -7,13 +7,19 @@ class ErrorCode(Enum):
     INVALID_TOKEN = 'invalid_token'
     USER_NOT_FOUND = 'user_not_found'
     INVALID_PASSWORD = 'invalid_password'
+    ACCESS_DENIED = 'access_denied'
+    MAIN_CATEGORY_NOT_FOUND = 'main_category_not_found'
+    ALREADY_CREATED = 'already_created'
 
 ERROR_MESSAGE = {
     ErrorCode.USER_ALREADY_REGISTERED: 'Этот логин уже занят',
     ErrorCode.MAIL_ALREADY_TAKEN: 'Эта почта уже занята',
     ErrorCode.INVALID_TOKEN: 'Неизвестный токен',
     ErrorCode.USER_NOT_FOUND: 'Пользователь не найден',
-    ErrorCode.INVALID_PASSWORD: 'Неизвестный пароль'
+    ErrorCode.INVALID_PASSWORD: 'Неизвестный пароль',
+    ErrorCode.ACCESS_DENIED: 'Отказано в доступе',
+    ErrorCode.MAIN_CATEGORY_NOT_FOUND: 'Основная категория не найдена',
+    ErrorCode.ALREADY_CREATED: 'Уже создано!'
 }
 
 async def raise_error(error_code: ErrorCode, status_code: int = status.HTTP_400_BAD_REQUEST):

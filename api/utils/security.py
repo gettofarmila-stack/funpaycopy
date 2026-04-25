@@ -42,3 +42,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
         )
+    
+async def get_current_admin(user: User = Depends(get_current_user)):
+    if not user.is_admin:
+        await raise_error(ErrorCode.ACCESS_DENIED, status.HTTP_403_FORBIDDEN)
+    return user
