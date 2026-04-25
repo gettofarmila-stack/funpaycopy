@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, asc, desc
 
 from core.database.models import Lot
 
@@ -9,6 +9,6 @@ async def create_lot_rep(price, seller_id, short_desc, desc, stock, category_id,
     await db.refresh(new_lot)
     return new_lot
 
-async def get_lots_in_category_rep(subcategory_id, db):
-    query = await db.execute(select(Lot).where(Lot.category_id == subcategory_id))
+async def get_lots_in_category_rep(subcategory_id, db, sort_rule):
+    query = await db.execute(select(Lot).where(Lot.category_id == subcategory_id).order_by(sort_rule))
     return query.scalars().all()

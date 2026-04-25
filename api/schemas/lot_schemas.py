@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from enum import Enum
 
 
 class LotCreate(BaseModel):
@@ -13,3 +14,7 @@ class LotResponse(LotCreate):
     seller_id: int
     class Config:
         from_attributes = True
+
+class SortOrder(str, Enum):
+    price_asc = 'price_asc'
+    price_desc = 'price_desc'
