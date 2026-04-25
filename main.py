@@ -1,24 +1,19 @@
-from fastapi import FastAPI, Depends, HTTPException, status
-from pydantic import BaseModel, EmailStr
+from fastapi import FastAPI, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.logic.user import check_user, registrate_user, login_user
 from api.utils.security import get_db
 from api.routes.admin import router as admin_router
+from api.routes.category import router as category_router
+from api.routes.lots import router as lots_router
+from api.schemas.auth_schemas import UserCreateModel, UserLoginModel
 
 app = FastAPI(title='FunPayCopy')
 
 app.include_router(admin_router)
-
-class UserCreateModel(BaseModel):
-    login: str
-    email: EmailStr
-    password: str
-
-class UserLoginModel(BaseModel):
-    login_data: str
-    password: str
+app.include_router(category_router)
+app.include_router(lots_router)
 
 @app.get('/')
 async def ping_status():

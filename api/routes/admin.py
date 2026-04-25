@@ -1,19 +1,12 @@
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database.models import User
 from api.utils.security import get_current_admin, get_db, get_current_user
 from core.logic.admin import create_main_category_logic, create_subcategory_logic
+from api.schemas.admin_schemas import NewMainCategoryModel, SubCategoryModel
 
 router = APIRouter(prefix='/admin', tags=['Admin'])
-
-class NewMainCategoryModel(BaseModel):
-    category_name: str
-
-class SubCategoryModel(BaseModel):
-    subcategory_name: str
-    main_category_id: int
 
 @router.post('/new_main_category')
 async def create_main_category(data: NewMainCategoryModel, admin: User = Depends(get_current_admin), db: AsyncSession = Depends(get_db)):
