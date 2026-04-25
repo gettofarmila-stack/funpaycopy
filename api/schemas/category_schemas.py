@@ -14,3 +14,10 @@ class MainCategoryTreeSchema(BaseModel):
     subcategories: List[SubCategorySchema] 
     class Config:
         from_attributes = True
+
+class MainCategorySchema(BaseModel):
+    id: int
+    name: str
+    subcategories: List[SubCategorySchema]
+    class Config:
+        from_attributes = True

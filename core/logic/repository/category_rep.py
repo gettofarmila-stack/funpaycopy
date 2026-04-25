@@ -18,3 +18,7 @@ async def get_main_category_by_name_rep(db, name):
 async def get_categories(db):
     category_list = await db.execute(select(MainCategory).options(selectinload(MainCategory.subcategories)))
     return category_list.scalars().all()
+
+async def get_category(db, category_id):
+    category = await db.execute(select(MainCategory).options(selectinload(MainCategory.subcategories)).where(MainCategory.id == category_id))
+    return category.scalar_one_or_none()

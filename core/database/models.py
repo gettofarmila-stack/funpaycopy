@@ -26,7 +26,7 @@ class Lot(Base):
     description = Column(String, nullable=False)
     price = Column(Numeric(10, 2), CheckConstraint('price >= 0.01'), nullable=False)
     stock = Column(Integer, nullable=False)
-    category_id = Column(Integer, ForeignKey('categories.id'))
+    category_id = Column(Integer, ForeignKey('categories.id'), index=True)
     seller_id = Column(Integer, ForeignKey('users.id'))
 
     category = relationship('Category', back_populates='lots')
