@@ -9,6 +9,9 @@ from api.schemas.lot_schemas import LotCreate, LotResponse, SortOrder, CurrentLo
 
 router = APIRouter(prefix='/lots', tags=['Lots'])
 
+@router.post('/create', response_model=LotResponse)
+async def create_lot(data: LotCreate, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    return await create_lot_logic(data, db, user)
 
 @router.get('/')
 async def get_lots_in_subcategory(
@@ -21,7 +24,3 @@ async def get_lots_in_subcategory(
 @router.get('/{lot_id}', response_model=CurrentLotReponse)
 async def get_current_lot(lot_id: int, db: AsyncSession = Depends(get_db)):
     return await get_current_lot_info_logic(lot_id, db)
-
-@router.post('/create', response_model=LotResponse)
-async def create_lot(data: LotCreate, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    return await create_lot_logic(data, db, user)

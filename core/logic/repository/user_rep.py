@@ -1,4 +1,5 @@
 from sqlalchemy import select, or_, update
+from sqlalchemy.orm import selectinload
 
 from core.database.models import User
 
@@ -20,7 +21,7 @@ async def get_user_for_login(db, user_data):
     return query.scalar_one_or_none()
 
 async def get_user_by_id(db, uid):
-    query = await db.execute(select(User).where(User.id == uid))
+    query = await db.execute(select(User).options(selectinload(User.lots)).where(User.id == uid))
     return query.scalar_one_or_none()
 
 async def update_user_reviews_rep(seller_id, count, avg_rating, db):

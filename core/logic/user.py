@@ -59,6 +59,7 @@ async def get_user_profile_logic(user_id, db):
         registered_at=user.registered_at,
         reviews_count=user.reviews_count,
         rating=user.rating,
-        reviews=reviews
+        reviews=reviews,
+        lots=user.lots
     )
     return profile
