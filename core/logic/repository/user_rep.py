@@ -1,4 +1,4 @@
-from sqlalchemy import select, or_
+from sqlalchemy import select, or_, update
 
 from core.database.models import User
 
@@ -13,9 +13,22 @@ async def create_user(login, email, password, db):
 
 async def get_user(db, user_data):
     query = await db.execute(select(User).where(or_(User.email == user_data.email, User.login == user_data.login)))
-    exisiting_user = query.scalar_one_or_none()
-    return exisiting_user
+    return query.scalar_one_or_none()
 
 async def get_user_for_login(db, user_data):
     query = await db.execute(select(User).where(or_(User.email == user_data.username, User.login == user_data.username)))
     return query.scalar_one_or_none()
+
+async def get_user_by_id(db, uid):
+    query = await db.execute(select(User).where(User.id == uid))
+    return query.scalar_one_or_none()
+
+async def update_user_reviews_rep(seller_id, count, avg_rating, db):
+    await db.execute(
+        update(User)
+        .where(User.id == seller_id)
+        .values(
+            reviews_count=count,
+            rating=round(avg_rating, 1)
+        )
+    )

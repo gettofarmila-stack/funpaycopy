@@ -1,4 +1,5 @@
 from sqlalchemy import select, asc, desc
+from sqlalchemy.orm import selectinload
 
 from core.database.models import Lot
 
@@ -14,5 +15,5 @@ async def get_lots_in_category_rep(subcategory_id, db, sort_rule):
     return query.scalars().all()
 
 async def get_current_lot_info_rep(lot_id, db):
-    query = await db.execute(select(Lot).where(Lot.id == lot_id))
+    query = await db.execute(select(Lot).options(selectinload(Lot.seller)).where(Lot.id == lot_id))
     return query.scalar_one_or_none()

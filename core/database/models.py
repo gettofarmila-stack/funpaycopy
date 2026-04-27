@@ -16,8 +16,23 @@ class User(Base):
     balance = Column(Numeric(10, 2), default=0.00)
     password_hash = Column(String, nullable=False)
     is_admin = Column(Boolean, default=False)
+    reviews_count = Column(Integer, default=0)
+    rating = Column(Numeric(10, 1), default=0.0)
 
+    authored_reviews = relationship('Review', back_populates='author', foreign_keys='Review.author_id')
+    owned_reviews = relationship('Review', back_populates='seller', foreign_keys='Review.seller_id')
     lots = relationship('Lot', back_populates='seller')
+
+class Review(Base):
+    __tablename__ = 'reviews'
+    id = Column(Integer, primary_key=True)
+    text = Column(String)
+    stars = Column(Integer, CheckConstraint('stars >= 1 AND stars <= 5'), nullable=False)
+    author_id = Column(Integer, ForeignKey('users.id'))
+    seller_id = Column(Integer, ForeignKey('users.id'))
+
+    author = relationship('User', back_populates='authored_reviews', foreign_keys=[author_id])
+    seller = relationship('User', back_populates='owned_reviews', foreign_keys=[seller_id])
 
 class Lot(Base):
     __tablename__ = 'lots'

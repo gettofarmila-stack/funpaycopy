@@ -1,5 +1,8 @@
 from pydantic import BaseModel, Field
 from enum import Enum
+from typing import Dict
+
+from api.schemas.user_schemas import UserShortSchema
 
 
 class LotCreate(BaseModel):
@@ -21,7 +24,7 @@ class SortOrder(str, Enum):
 
 class CurrentLotReponse(BaseModel):
     id: int
-    seller_id: int
+    seller: UserShortSchema
     category_id: int
     short_description: str
     description: str

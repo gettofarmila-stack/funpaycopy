@@ -2,8 +2,10 @@ from fastapi import HTTPException, status
 
 from api.utils.errors import raise_error, ErrorCode
 from core.utils.security_utils import get_password_hash, verify_password
-from core.logic.repository.user_rep import create_user, get_user, get_user_for_login
+from core.logic.repository.user_rep import create_user, get_user, get_user_for_login, get_user_by_id
 from api.utils.security import create_access_token
+from core.logic.repository.review_rep import get_user_reviews_rep
+from api.schemas.user_schemas import UserProfileSchema
 
 async def check_user(db, user_data):
     exisiting_user = await get_user(db, user_data)
@@ -46,3 +48,17 @@ async def login_user(user_data, db):
             'registered_at': user.registered_at
         }
     }
+
+async def get_user_profile_logic(user_id, db):
+    user = await get_user_by_id(db, user_id)
+    if not user:
+        await raise_error(ErrorCode.USER_NOT_FOUND, 404)
+    reviews = await get_user_reviews_rep(user_id, db)
+    profile = UserProfileSchema(
+        login=user.login,
+        registered_at=user.registered_at,
+        reviews_count=user.reviews_count,
+        rating=user.rating,
+        reviews=reviews
+    )
+    return profile

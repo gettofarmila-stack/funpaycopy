@@ -19,7 +19,7 @@ ERROR_MESSAGE = {
     ErrorCode.INVALID_PASSWORD: 'Неизвестный пароль',
     ErrorCode.ACCESS_DENIED: 'Отказано в доступе',
     ErrorCode.MAIN_CATEGORY_NOT_FOUND: 'Основная категория не найдена',
-    ErrorCode.ALREADY_CREATED: 'Уже создано!'
+    ErrorCode.ALREADY_CREATED: 'Обьект уже существует!'
 }
 
 async def raise_error(error_code: ErrorCode, status_code: int = status.HTTP_400_BAD_REQUEST):
