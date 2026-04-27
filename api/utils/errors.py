@@ -10,6 +10,7 @@ class ErrorCode(Enum):
     ACCESS_DENIED = 'access_denied'
     MAIN_CATEGORY_NOT_FOUND = 'main_category_not_found'
     ALREADY_CREATED = 'already_created'
+    CHAT_NOT_FOUND = 'chat_not_found'
 
 ERROR_MESSAGE = {
     ErrorCode.USER_ALREADY_REGISTERED: 'Этот логин уже занят',
@@ -19,7 +20,8 @@ ERROR_MESSAGE = {
     ErrorCode.INVALID_PASSWORD: 'Неизвестный пароль',
     ErrorCode.ACCESS_DENIED: 'Отказано в доступе',
     ErrorCode.MAIN_CATEGORY_NOT_FOUND: 'Основная категория не найдена',
-    ErrorCode.ALREADY_CREATED: 'Обьект уже существует!'
+    ErrorCode.ALREADY_CREATED: 'Обьект уже существует!',
+    ErrorCode.CHAT_NOT_FOUND: 'Чат не найден!'
 }
 
 async def raise_error(error_code: ErrorCode, status_code: int = status.HTTP_400_BAD_REQUEST):

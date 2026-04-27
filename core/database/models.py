@@ -21,7 +21,30 @@ class User(Base):
 
     authored_reviews = relationship('Review', back_populates='author', foreign_keys='Review.author_id')
     owned_reviews = relationship('Review', back_populates='seller', foreign_keys='Review.seller_id')
+    chats_as_client = relationship('Chat', back_populates='client', foreign_keys='Chat.client_id')
+    chats_as_seller = relationship('Chat', back_populates='seller', foreign_keys='Chat.seller_id')
     lots = relationship('Lot', back_populates='seller')
+    sended_messages = relationship('Message', back_populates='sender')
+
+class Chat(Base):
+    __tablename__ = 'chats'
+    id = Column(Integer, primary_key=True)
+    client_id = Column(Integer, ForeignKey('users.id'))
+    seller_id = Column(Integer, ForeignKey('users.id'))
+
+    client = relationship('User', back_populates='chats_as_client', foreign_keys=[client_id])
+    seller = relationship('User', back_populates='chats_as_seller', foreign_keys=[seller_id])
+    messages = relationship('Message', back_populates='chat')
+
+class Message(Base):
+    __tablename__ = 'messages'
+    id = Column(Integer, primary_key=True)
+    chat_id = Column(Integer, ForeignKey('chats.id'))
+    sender_id = Column(Integer, ForeignKey('users.id'))
+    text = Column(String)
+
+    chat = relationship('Chat', back_populates='messages')
+    sender = relationship('User', back_populates='sended_messages')
 
 class Review(Base):
     __tablename__ = 'reviews'
