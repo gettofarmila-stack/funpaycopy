@@ -32,3 +32,6 @@ class CurrentLotReponse(BaseModel):
     stock: int
     class Config:
         from_attributes = True
+
+class BuyLotModel(BaseModel):
+    id: int

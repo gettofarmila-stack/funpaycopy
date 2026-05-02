@@ -25,6 +25,7 @@ class User(Base):
     chats_as_seller = relationship('Chat', back_populates='seller', foreign_keys='Chat.seller_id')
     lots = relationship('Lot', back_populates='seller')
     sended_messages = relationship('Message', back_populates='sender')
+    orders = relationship('Order', back_populates='client')
 
 class Chat(Base):
     __tablename__ = 'chats'
@@ -64,11 +65,25 @@ class Lot(Base):
     description = Column(String, nullable=False)
     price = Column(Numeric(10, 2), CheckConstraint('price >= 0.01'), nullable=False)
     stock = Column(Integer, nullable=False)
+    is_active = Column(Boolean, default=True)
     category_id = Column(Integer, ForeignKey('categories.id'), index=True)
     seller_id = Column(Integer, ForeignKey('users.id'))
 
     category = relationship('Category', back_populates='lots')
     seller = relationship('User', back_populates='lots')
+    orders = relationship('Order', back_populates='lot')
+
+class Order(Base):
+    __tablename__ = 'orders'
+    id = Column(Integer, primary_key=True)
+    lot_id = Column(Integer, ForeignKey('lots.id'))
+    client_id = Column(Integer, ForeignKey('users.id'))
+    status = Column(String, default='waiting')
+    create_time = Column(DateTime, default=datetime.now)
+    close_time = Column(DateTime, nullable=True)
+    
+    lot = relationship('Lot', back_populates='orders')
+    client = relationship('User', back_populates='orders')
 
 class MainCategory(Base):
     __tablename__ = 'main_categories'

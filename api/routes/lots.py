@@ -5,7 +5,9 @@ from typing import Optional
 from core.database.models import User
 from api.utils.security import get_db, get_current_user
 from core.logic.lots import get_lots_in_cat, create_lot_logic, get_current_lot_info_logic
-from api.schemas.lot_schemas import LotCreate, LotResponse, SortOrder, CurrentLotReponse
+from api.schemas.lot_schemas import LotCreate, LotResponse, SortOrder, CurrentLotReponse, BuyLotModel
+from api.schemas.order_schemas import OrderSchema
+from core.logic.order import buy_lot_logic
 
 router = APIRouter(prefix='/lots', tags=['Lots'])
 
@@ -24,3 +26,7 @@ async def get_lots_in_subcategory(
 @router.get('/{lot_id}', response_model=CurrentLotReponse)
 async def get_current_lot(lot_id: int, db: AsyncSession = Depends(get_db)):
     return await get_current_lot_info_logic(lot_id, db)
+
+@router.post('/buy', response_model=OrderSchema)
+async def buy_lot(data: BuyLotModel, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+    return await buy_lot_logic(data.id, user, db)

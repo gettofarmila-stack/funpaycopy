@@ -2,6 +2,7 @@ from sqlalchemy import select, or_, update
 from sqlalchemy.orm import selectinload
 
 from core.database.models import User
+from api.utils.errors import ErrorCode, raise_error
 
 async def create_user(login, email, password, db):
     new_user = User(
@@ -33,3 +34,13 @@ async def update_user_reviews_rep(seller_id, count, avg_rating, db):
             rating=round(avg_rating, 1)
         )
     )
+
+async def charge_funds_rep(user, amount, db):
+    if user.balance < amount:
+        await raise_error(ErrorCode.DONT_HAVE_FUNDS)
+    user.balance -= amount
+    await db.flush()
+
+async def refill_balance_rep(user, amount, db):
+    user.balance += amount
+    await db.flush()

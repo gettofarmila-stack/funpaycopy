@@ -10,6 +10,7 @@ from api.routes.lots import router as lots_router
 from api.routes.user import router as user_router
 from api.routes.review import router as review_router
 from api.routes.chat import router as chat_router
+from api.routes.order import router as order_router
 from api.schemas.auth_schemas import UserCreateModel, UserLoginModel
 
 app = FastAPI(title='FunPayCopy')
@@ -20,6 +21,7 @@ app.include_router(lots_router)
 app.include_router(user_router)
 app.include_router(review_router)
 app.include_router(chat_router)
+app.include_router(order_router)
 
 @app.get('/')
 async def ping_status():

@@ -1,7 +1,8 @@
 from decimal import Decimal
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy import asc, desc
 
+from api.utils.errors import ErrorCode, raise_error
 from core.logic.repository.lots_rep import get_lots_in_category_rep, create_lot_rep, get_current_lot_info_rep
 from core.database.models import Lot
 
