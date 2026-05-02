@@ -14,6 +14,7 @@ class ErrorCode(Enum):
     DONT_HAVE_FUNDS = 'dont_have_funds'
     UNKNOWN_ERROR = 'unknown_error'
     OBJECT_NOT_FOUND = 'object_not_found'
+    ALREADY_CLOSED = 'already_closed'
 
 ERROR_MESSAGE = {
     ErrorCode.USER_ALREADY_REGISTERED: 'Этот логин уже занят',
@@ -27,7 +28,8 @@ ERROR_MESSAGE = {
     ErrorCode.CHAT_NOT_FOUND: 'Чат не найден!',
     ErrorCode.DONT_HAVE_FUNDS: 'Недостаточно средств',
     ErrorCode.UNKNOWN_ERROR: 'Неизвестная ошибка, посмотри логи API',
-    ErrorCode.OBJECT_NOT_FOUND: 'Обьект не найден'
+    ErrorCode.OBJECT_NOT_FOUND: 'Обьект не найден',
+    ErrorCode.ALREADY_CLOSED: 'Заказ уже закрыт по другой причине'
 }
 
 async def raise_error(error_code: ErrorCode, status_code: int = status.HTTP_400_BAD_REQUEST):

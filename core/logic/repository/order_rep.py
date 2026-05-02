@@ -4,7 +4,7 @@ from datetime import datetime
 
 from core.utils.enums import OrderStatus
 from api.utils.errors import ErrorCode, raise_error
-from core.database.models import Order
+from core.database.models import Order, Lot
 
 async def create_order_rep(lot_id, client_id, db):
     new_order = Order(lot_id=lot_id, client_id=client_id)
@@ -12,19 +12,21 @@ async def create_order_rep(lot_id, client_id, db):
     await db.flush()
     return new_order
 
-async def update_order_status_rep(order_id: int, status: OrderStatus, db):
-    order_res = await db.execute(
-        select(Order)
-        .where(Order.id == order_id)
-        .options(
-            selectinload(Order.lot),
-            selectinload(Order.client)
-        )
-    )
-    order = order_res.scalar_one_or_none()
+async def update_order_status_rep(order, status: OrderStatus, db):
     if order is None:
         await raise_error(ErrorCode.OBJECT_NOT_FOUND)
     order.status = status.value
     order.close_time = datetime.now()
     await db.flush()
     return order
+
+async def get_order_object_rep(order_id, db):
+    order_res = await db.execute(
+        select(Order)
+        .where(Order.id == order_id)
+        .options(
+            selectinload(Order.lot).selectinload(Lot.seller),
+            selectinload(Order.client)
+        )
+    )
+    return order_res.scalar_one_or_none()
