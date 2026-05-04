@@ -25,7 +25,8 @@ class User(Base):
     chats_as_seller = relationship('Chat', back_populates='seller', foreign_keys='Chat.seller_id')
     lots = relationship('Lot', back_populates='seller')
     sended_messages = relationship('Message', back_populates='sender')
-    orders = relationship('Order', back_populates='client')
+    client_orders = relationship('Order', back_populates='client', foreign_keys='Order.client_id')
+    selled_orders = relationship('Order', back_populates='seller', foreign_keys='Order.seller_id')
 
 class Chat(Base):
     __tablename__ = 'chats'
@@ -68,6 +69,7 @@ class Lot(Base):
     is_active = Column(Boolean, default=True)
     category_id = Column(Integer, ForeignKey('categories.id'), index=True)
     seller_id = Column(Integer, ForeignKey('users.id'))
+    buying_message = Column(String, nullable=True)
 
     category = relationship('Category', back_populates='lots')
     seller = relationship('User', back_populates='lots')
@@ -78,12 +80,14 @@ class Order(Base):
     id = Column(Integer, primary_key=True)
     lot_id = Column(Integer, ForeignKey('lots.id'))
     client_id = Column(Integer, ForeignKey('users.id'))
+    seller_id = Column(Integer, ForeignKey('users.id'))
     status = Column(String, default='waiting')
     create_time = Column(DateTime, default=datetime.now)
     close_time = Column(DateTime, nullable=True)
     
     lot = relationship('Lot', back_populates='orders')
-    client = relationship('User', back_populates='orders')
+    client = relationship('User', back_populates='client_orders', foreign_keys=[client_id])
+    seller = relationship('User', back_populates='selled_orders', foreign_keys=[seller_id])
 
 class MainCategory(Base):
     __tablename__ = 'main_categories'

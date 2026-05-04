@@ -4,6 +4,11 @@ from typing import Dict
 
 from api.schemas.user_schemas import UserShortSchema
 
+class AboveLotSchema(BaseModel):
+    id: int
+    short_description: str
+    class Config:
+        from_attributes = True
 
 class LotCreate(BaseModel):
     category_id: int

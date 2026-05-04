@@ -3,7 +3,7 @@ from fastapi import HTTPException
 
 from core.logic.repository.lots_rep import get_current_lot_info_rep, lot_minus_rep
 from api.utils.errors import ErrorCode, raise_error
-from core.logic.repository.order_rep import create_order_rep, update_order_status_rep, get_order_object_rep
+from core.logic.repository.order_rep import create_order_rep, update_order_status_rep, get_order_object_rep, get_user_client_orders_rep, get_user_selled_orders_rep
 from core.logic.repository.user_rep import charge_funds_rep, refill_balance_rep
 from core.logic.chat import send_message_logic
 from core.utils.enums import OrderStatus
@@ -13,7 +13,7 @@ async def buy_lot_logic(lot_id, client, db):
     if lot.price > client.balance:
         await raise_error(ErrorCode.DONT_HAVE_FUNDS)
     try:
-        order = await create_order_rep(lot_id, client.id, db)
+        order = await create_order_rep(lot_id, client.id, lot.seller_id, db)
         await lot_minus_rep(order.lot, db)
         await charge_funds_rep(client, lot.price, db)
         await db.commit()
@@ -25,6 +25,8 @@ async def buy_lot_logic(lot_id, client, db):
         logging.error(f'Ошибка в buy_lot_logic: {e}')
         await raise_error(ErrorCode.UNKNOWN_ERROR)
     msg_text = f"📦 Заказ оформлен! Лот: {lot.short_description}. Цена: {lot.price}"
+    if lot.buying_message:
+        msg_text += f'\n\nСообщение от продавца: {lot.buying_message}'
     await send_message_logic(msg_text, client.id, lot.seller_id, db)
     return order
 
@@ -34,7 +36,7 @@ async def refund_order_logic(order_id, client, db):
         if order.lot.seller_id != client.id:
             await db.rollback()
             await raise_error(ErrorCode.ACCESS_DENIED)
-        if order.status == OrderStatus.REFUNDED:
+        if order.status in [OrderStatus.REFUNDED, OrderStatus.CANCELLED]:
             await db.rollback()
             await raise_error(ErrorCode.ALREADY_CLOSED)
         if order.lot.seller.balance < order.lot.price:
@@ -78,3 +80,9 @@ async def close_order_logic(order_id, client, db):
         await db.rollback()
         logging.error(f'Ошибка close_order_logic: {e}')
         await raise_error(ErrorCode.UNKNOWN_ERROR)
+
+async def get_user_client_orders_logic(user, db):
+    return await get_user_client_orders_rep(user.id, db)
+
+async def get_user_selled_orders_logic(user, db):
+    return await get_user_selled_orders_rep(user.id, db)
